@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>IdeaBank ✦ — Where Bold Ideas Find a Home</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0d0c0a;--ink2:#1a1814;--ink3:#252219;
+  --amber:#e8a020;--amber2:#f0b840;--amber-dim:rgba(232,160,32,0.12);--amber-glow:rgba(232,160,32,0.25);
+  --teal:#2a8a7a;--teal-dim:rgba(42,138,122,0.15);--rose:#c44a5a;
+  --text:#e8e2d4;--text2:#b8b0a0;--text3:#787060;
+  --border:rgba(232,226,212,0.1);--border2:rgba(232,226,212,0.2);
+}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;position:relative}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");opacity:.025;pointer-events:none;z-index:0}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes scaleIn{from{opacity:0;transform:scale(0.93)}to{opacity:1;transform:scale(1)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes toastUp{from{opacity:0;transform:translate(-50%,16px)}to{opacity:1;transform:translate(-50%,0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.fade-up{animation:fadeUp .55s ease both}
+.fu1{animation:fadeUp .55s .1s ease both}
+.fu2{animation:fadeUp .55s .2s ease both}
+.fu3{animation:fadeUp .55s .3s ease both}
+.fu4{animation:fadeUp .55s .45s ease both}
+
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--ink2)}::-webkit-scrollbar-thumb{background:var(--amber);border-radius:2px}
+
+/* ── NAV ── */
+#nav{position:sticky;top:0;z-index:40;background:rgba(13,12,10,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:60px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-icon{width:28px;height:28px;background:var(--amber);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;font-family:'Playfair Display',serif;font-weight:900;color:var(--ink)}
+.logo-text{font-family:'Playfair Display',serif;font-size:18px;font-weight:700}
+.logo-text span{color:var(--amber)}
+.nav-stats{display:flex;gap:20px;margin-right:16px}
+.nav-stat{text-align:center}
+.nav-stat-n{font-family:'DM Mono',monospace;font-size:14px;font-weight:500;color:var(--amber)}
+.nav-stat-l{font-size:10px;color:var(--text3);letter-spacing:.4px}
+.nav-right{display:flex;align-items:center;gap:8px}
+
+/* ── TICKER ── */
+#ticker-bar{background:var(--ink2);border-bottom:1px solid var(--border);padding:8px 0;overflow:hidden;white-space:nowrap}
+.ticker-inner{display:inline-flex;animation:ticker 30s linear infinite}
+.ticker-item{display:inline-flex;align-items:center;gap:10px;padding:0 32px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)}
+.ticker-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+
+/* ── HERO ── */
+#hero{padding:72px 28px 56px;text-align:center;position:relative}
+.hero-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-60%);width:700px;height:400px;background:radial-gradient(ellipse,rgba(232,160,32,.07),transparent 68%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(232,160,32,.1);border:1px solid rgba(232,160,32,.25);border-radius:20px;padding:6px 16px;font-size:11px;color:var(--amber);font-family:'DM Mono',monospace;letter-spacing:1px;text-transform:uppercase;margin-bottom:28px}
+.pulse-dot{width:6px;height:6px;border-radius:50%;background:var(--amber);animation:pulse 2s infinite;display:inline-block}
+h1{font-family:'Playfair Display',serif;font-size:clamp(36px,6vw,70px);font-weight:900;line-height:1.08;color:var(--text);margin-bottom:20px}
+h1 em{color:var(--amber);font-style:italic}
+.hero-sub{font-size:clamp(14px,2vw,17px);color:var(--text2);line-height:1.7;max-width:500px;margin:0 auto 36px}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.hero-stats{display:flex;justify-content:center;margin-top:56px;max-width:560px;margin-left:auto;margin-right:auto}
+.hstat{flex:1;padding:18px 8px;text-align:center;border-right:1px solid var(--border)}
+.hstat:last-child{border-right:none}
+.hstat-n{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:var(--amber);line-height:1}
+.hstat-l{font-size:10px;color:var(--text3);margin-top:5px;letter-spacing:.4px}
+
+/* ── HOW IT WORKS ── */
+#how{background:var(--ink2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:48px 28px}
+.section-eyebrow{font-size:11px;font-family:'DM Mono',monospace;color:var(--amber);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;text-align:center}
+.section-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;text-align:center;margin-bottom:36px}
+.how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;max-width:880px;margin:0 auto}
+.how-card{padding:20px;background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:14px}
+.how-num{font-size:10px;font-family:'DM Mono',monospace;color:var(--amber);letter-spacing:1px;margin-bottom:12px}
+.how-icon{font-size:28px;margin-bottom:10px}
+.how-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;margin-bottom:6px}
+.how-desc{font-size:12px;color:var(--text2);line-height:1.65}
+
+/* ── BANK SECTION ── */
+#bank{max-width:1100px;margin:0 auto;padding:48px 28px 80px}
+.bank-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px}
+.bank-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:700}
+.bank-count{font-size:13px;color:var(--text3);font-weight:400;margin-left:10px;font-family:'DM Mono',monospace}
+.bank-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.filter-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.filter-pill{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:500;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif}
+.filter-pill.active{border-color:var(--amber);background:var(--amber-dim);color:var(--amber)}
+.stage-pills{display:flex;gap:6px;flex-wrap:wrap}
+.stage-pill{padding:4px 12px;border-radius:6px;font-size:11px;font-weight:500;font-family:'DM Mono',monospace;border:1px solid var(--border);background:rgba(255,255,255,.02);color:var(--text3);cursor:pointer;transition:all .15s}
+.stage-pill.active{border-color:rgba(232,160,32,.5);background:var(--amber-dim);color:var(--amber)}
+
+/* ── IDEA GRID ── */
+#idea-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-top:24px}
+.idea-card{background:var(--ink2);border:1px solid var(--border);border-radius:16px;padding:18px;cursor:pointer;transition:all .22s}
+.idea-card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;flex-wrap:wrap;gap:6px}
+.card-badges{display:flex;gap:6px;flex-wrap:wrap}
+.card-time{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;flex-shrink:0}
+.card-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;line-height:1.35;color:var(--text);margin-bottom:8px}
+.card-brief{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.card-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}
+.card-tag{font-size:11px;color:var(--text3);background:rgba(255,255,255,.05);padding:2px 8px;border-radius:4px;font-family:'DM Mono',monospace}
+.card-footer{display:flex;align-items:center;justify-content:space-between}
+.card-author{display:flex;align-items:center;gap:8px}
+.author-name{font-size:12px;color:var(--text2)}
+.collab-stack{display:flex;margin-left:6px}
+.collab-av{width:20px;height:20px;border-radius:50%;border:2px solid var(--ink2);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;font-family:'DM Mono',monospace;margin-left:-7px}
+.collab-av:first-child{margin-left:0}
+.vote-btn{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:8px;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;transition:all .15s}
+.vote-btn:hover,.vote-btn.voted{border-color:var(--amber);color:var(--amber);background:var(--amber-dim)}
+
+/* ── EMPTY STATE ── */
+#empty-state{display:none;text-align:center;padding:64px 0;color:var(--text3)}
+.empty-icon{font-size:40px;margin-bottom:14px}
+.empty-title{font-family:'Playfair Display',serif;font-size:18px;margin-bottom:8px}
+.empty-desc{font-size:13px}
+
+/* ── BADGES / TAGS ── */
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500;letter-spacing:.02em;font-family:'DM Mono',monospace}
+.stage-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500;font-family:'DM Mono',monospace}
+
+/* ── AVATAR ── */
+.avatar{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;color:#fff;font-family:'DM Mono',monospace;flex-shrink:0}
+
+/* ── BUTTONS ── */
+.btn-primary{background:var(--amber);color:var(--ink);border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;transition:all .2s;letter-spacing:.01em}
+.btn-primary:hover{background:var(--amber2);transform:translateY(-1px);box-shadow:0 8px 24px var(--amber-glow)}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2);border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;transition:all .2s}
+.btn-ghost:hover{border-color:var(--amber);color:var(--amber)}
+.btn-danger-sm{background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px;padding:4px;border-radius:4px;transition:color .15s}
+.btn-danger-sm:hover{color:var(--rose)}
+
+/* ── INPUTS ── */
+input,textarea,select{background:rgba(255,255,255,.04);border:1px solid var(--border2);color:var(--text);font-family:'DM Sans',sans-serif;border-radius:8px;outline:none;transition:border-color .2s,box-shadow .2s}
+input:focus,textarea:focus,select:focus{border-color:var(--amber);box-shadow:0 0 0 3px var(--amber-dim)}
+input::placeholder,textarea::placeholder{color:var(--text3)}
+select option{background:#1a1814}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;color:var(--text2);margin-bottom:6px;font-weight:500}
+.field label span{font-weight:400;color:var(--text3);margin-left:6px}
+.field-error{color:var(--rose);font-size:11px;margin-top:4px;display:block}
+.field input,.field textarea,.field select{width:100%;padding:10px 14px;font-size:14px}
+.field textarea{resize:vertical;line-height:1.6}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* ── MODAL ── */
+.overlay{display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.78);backdrop-filter:blur(7px);align-items:center;justify-content:center;padding:20px;animation:fadeIn .2s ease}
+.overlay.open{display:flex}
+.modal{background:var(--ink2);border:1px solid var(--border2);border-radius:20px;width:100%;max-width:560px;max-height:92vh;overflow-y:auto;animation:scaleIn .28s ease;position:relative}
+.modal-lg{max-width:620px}
+.modal-hdr{padding:24px 24px 0;border-bottom:1px solid var(--border);padding-bottom:18px}
+.modal-hdr-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.modal-eyebrow{font-size:11px;font-family:'DM Mono',monospace;color:var(--amber);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+.modal-title{font-family:'Playfair Display',serif;font-size:21px;font-weight:700}
+.modal-close{background:rgba(255,255,255,.07);border:none;color:var(--text2);width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.modal-body{padding:22px 24px}
+.modal-footer{padding:0 24px 22px;display:flex;justify-content:space-between;align-items:center}
+.step-count{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace}
+
+/* ── PROGRESS BAR ── */
+.progress-bar{display:flex;gap:0;margin-bottom:10px}
+.progress-seg{flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.08);transition:background .3s}
+.progress-seg.done{background:var(--amber)}
+.progress-labels{display:flex;justify-content:space-between}
+.progress-lbl{font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);transition:color .3s}
+.progress-lbl.active{color:var(--amber)}
+
+/* ── DETAIL MODAL ── */
+.detail-hero{padding:26px 26px 18px;border-bottom:1px solid var(--border);border-radius:20px 20px 0 0}
+.detail-tabs{display:flex;border-bottom:1px solid var(--border);padding:0 26px}
+.dtab{padding:13px 0;margin-right:26px;border:none;background:none;color:var(--text3);border-bottom:2px solid transparent;cursor:pointer;font-size:13px;font-weight:500;transition:all .15s;font-family:'DM Sans',sans-serif;text-transform:capitalize}
+.dtab.active{color:var(--amber);border-bottom-color:var(--amber)}
+.detail-body{padding:24px 26px}
+
+/* ── COLLAB REQUEST ── */
+.collab-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.seeking-pill{padding:7px 14px;border-radius:20px;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;font-size:12px;font-weight:500;transition:all .15s;font-family:'DM Sans',sans-serif}
+.seeking-pill.sel{border-color:var(--amber);background:var(--amber-dim);color:var(--amber)}
+.stage-picker{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stage-pick-btn{padding:10px;border:1px solid var(--border2);border-radius:8px;background:transparent;color:var(--text2);cursor:pointer;font-size:13px;font-weight:500;transition:all .15s;font-family:'DM Sans',sans-serif}
+.stage-pick-btn.sel{border-color:var(--amber);background:var(--amber-dim);color:var(--amber)}
+
+/* ── PREVIEW CARD ── */
+.preview-box{background:rgba(232,160,32,.06);border:1px solid rgba(232,160,32,.2);border-radius:12px;padding:14px;margin-top:10px}
+.preview-label{font-size:10px;font-family:'DM Mono',monospace;color:var(--amber);margin-bottom:8px;letter-spacing:1px}
+.preview-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--text);line-height:1.4}
+.preview-brief{font-size:12px;color:var(--text2);margin-top:6px;line-height:1.5}
+
+/* ── SEEKING TAG ── */
+.seeking-box{padding:14px;background:var(--teal-dim);border:1px solid rgba(42,138,122,.25);border-radius:12px;margin-top:12px}
+.seeking-label{font-size:11px;font-family:'DM Mono',monospace;color:var(--teal);margin-bottom:8px;letter-spacing:1px}
+.tag-teal{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500;font-family:'DM Mono',monospace;background:rgba(42,138,122,.2);color:var(--teal);margin:2px}
+
+/* ── SUCCESS ── */
+.success-screen{text-align:center;padding:32px 0}
+.success-icon{font-size:48px;margin-bottom:14px}
+.success-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--amber);margin-bottom:8px}
+.success-desc{font-size:14px;color:var(--text2);line-height:1.6}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:var(--ink2);border:1px solid rgba(232,160,32,.4);border-radius:12px;padding:13px 22px;z-index:200;display:none;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,.5);animation:toastUp .3s ease;white-space:nowrap}
+#toast.show{display:flex}
+.toast-icon{font-size:18px}
+.toast-msg{font-size:14px;font-weight:500}
+
+/* ── FOOTER ── */
+footer{border-top:1px solid var(--border);padding:28px;text-align:center}
+.footer-brand{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--amber);margin-bottom:6px}
+.footer-sub{font-size:12px;color:var(--text3)}
+
+/* ── COLLAB STACK AUTHOR ── */
+.collab-more{width:20px;height:20px;border-radius:50%;border:2px solid var(--ink2);background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--text3);margin-left:-7px}
+
+@media(max-width:600px){
+  #nav{padding:0 14px}.nav-stats{gap:12px}
+  #hero{padding:48px 16px 40px}
+  #bank{padding:32px 16px 60px}
+  .field-grid{grid-template-columns:1fr}
+  .modal-body{padding:18px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="logo">
+    <div class="logo-icon">✦</div>
+    <div class="logo-text">Idea<span>Bank</span></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px">
+    <div class="nav-stats">
+      <div class="nav-stat"><div class="nav-stat-n" id="stat-ideas">5</div><div class="nav-stat-l">Ideas</div></div>
+      <div class="nav-stat"><div class="nav-stat-n" id="stat-votes">699</div><div class="nav-stat-l">Votes</div></div>
+      <div class="nav-stat"><div class="nav-stat-n" id="stat-collabs">11</div><div class="nav-stat-l">Collabs</div></div>
+    </div>
+    <div class="nav-right">
+      <button class="btn-primary" style="padding:8px 18px;font-size:13px" onclick="openSubmit()">+ Submit Idea</button>
+    </div>
+  </div>
+</nav>
+
+<!-- TICKER -->
+<div id="ticker-bar">
+  <div class="ticker-inner" id="ticker-inner"></div>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-badge fade-up"><span class="pulse-dot"></span>Open for Submissions</div>
+  <h1 class="fu1">Where Bold<br><em>Ideas</em> Find a Home</h1>
+  <p class="hero-sub fu2">A living repository of innovative ideas from Africa's builders and thinkers. Submit your concept, find collaborators, and watch ideas grow into reality.</p>
+  <div class="hero-btns fu3">
+    <button class="btn-primary" style="padding:13px 28px;font-size:15px" onclick="openSubmit()">Submit Your Idea ✦</button>
+    <button class="btn-ghost" style="padding:13px 28px;font-size:15px" onclick="document.getElementById('bank').scrollIntoView({behavior:'smooth'})">Explore Ideas ↓</button>
+  </div>
+  <div class="hero-stats fu4" id="hero-stats"></div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="section-eyebrow">The Process</div>
+  <h2 class="section-title">How It Works</h2>
+  <div class="how-grid">
+    <div class="how-card"><div class="how-num">01</div><div class="how-icon">💡</div><div class="how-title">Submit</div><div class="how-desc">Share your idea in 4 simple steps — what it is, the problem it solves, and who you are.</div></div>
+    <div class="how-card"><div class="how-num">02</div><div class="how-icon">🗳️</div><div class="how-title">Get Voted</div><div class="how-desc">The community votes on ideas they find compelling, surfacing the strongest concepts.</div></div>
+    <div class="how-card"><div class="how-num">03</div><div class="how-icon">🤝</div><div class="how-title">Find Collaborators</div><div class="how-desc">Request to join ideas or attract talent to yours — connect directly with builders.</div></div>
+    <div class="how-card"><div class="how-num">04</div><div class="how-icon">🚀</div><div class="how-title">Build Together</div><div class="how-desc">Turn banked ideas into real projects with the right team, backed by community momentum.</div></div>
+  </div>
+</section>
+
+<!-- BANK -->
+<section id="bank">
+  <div class="bank-header">
+    <div class="bank-title">The Bank <span class="bank-count" id="bank-count">5 ideas</span></div>
+    <div class="bank-controls">
+      <select id="sort-select" onchange="renderGrid()" style="padding:7px 12px;font-size:12px;border-radius:8px">
+        <option value="votes">Most voted</option>
+        <option value="recent">Most recent</option>
+        <option value="collabs">Most collabs</option>
+      </select>
+      <input id="search-input" type="text" placeholder="Search ideas…" oninput="renderGrid()" style="padding:7px 12px;font-size:13px;border-radius:8px;width:170px">
+    </div>
+  </div>
+  <div class="filter-pills" id="cat-pills"></div>
+  <div class="stage-pills" id="stage-pills"></div>
+  <div id="idea-grid"></div>
+  <div id="empty-state">
+    <div class="empty-icon">◌</div>
+    <div class="empty-title">No ideas found</div>
+    <div class="empty-desc" style="margin-bottom:16px">Try adjusting your filters or be the first to submit in this category.</div>
+    <button class="btn-primary" style="padding:10px 24px;font-size:13px" onclick="openSubmit()">Submit an Idea</button>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-brand">IdeaBank ✦</div>
+  <div class="footer-sub">A platform for Africa's innovators · Built for Arena Investor Network</div>
+</footer>
+
+<!-- TOAST -->
+<div id="toast"><span class="toast-icon">✦</span><span class="toast-msg" id="toast-msg"></span></div>
+
+<!-- ═══════════════ SUBMIT MODAL ═══════════════ -->
+<div class="overlay" id="submit-overlay" onclick="closeOverlay('submit-overlay')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-hdr">
+      <div class="modal-hdr-row">
+        <div>
+          <div class="modal-eyebrow">New Idea</div>
+          <div class="modal-title" id="submit-step-title">Idea</div>
+        </div>
+        <button class="modal-close" onclick="closeOverlay('submit-overlay')">✕</button>
+      </div>
+      <div class="progress-bar" id="progress-bar">
+        <div class="progress-seg" data-i="0"></div>
+        <div class="progress-seg" data-i="1"></div>
+        <div class="progress-seg" data-i="2"></div>
+        <div class="progress-seg" data-i="3"></div>
+      </div>
+      <div class="progress-labels">
+        <span class="progress-lbl" data-i="0">IDEA</span>
+        <span class="progress-lbl" data-i="1">DETAILS</span>
+        <span class="progress-lbl" data-i="2">YOU</span>
+        <span class="progress-lbl" data-i="3">COLLABS</span>
+      </div>
+    </div>
+
+    <!-- Step 0: Idea -->
+    <div class="modal-body" id="step-0">
+      <div class="field">
+        <label>Idea Title <span>*</span></label>
+        <input id="f-title" placeholder="Give your idea a compelling name">
+        <span class="field-error" id="err-title"></span>
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label>Category</label>
+          <select id="f-category">
+            <option>Technology</option><option>Social Impact</option><option>Creative</option>
+            <option>Climate</option><option>Health</option><option>Education</option>
+            <option>Fintech</option><option>Culture</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Investment Stage</label>
+          <select id="f-fundstage">
+            <option>Pre-seed</option><option>Seed</option><option>Series A</option><option>Growth</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Current Stage</label>
+        <div class="stage-picker" id="stage-picker">
+          <button class="stage-pick-btn sel" onclick="pickStage(this,'Concept')">Concept</button>
+          <button class="stage-pick-btn" onclick="pickStage(this,'Prototype')">Prototype</button>
+          <button class="stage-pick-btn" onclick="pickStage(this,'Validation')">Validation</button>
+          <button class="stage-pick-btn" onclick="pickStage(this,'Scaling')">Scaling</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Brief Description <span>* <span id="brief-count">0</span>/280</span></label>
+        <textarea id="f-brief" rows="3" placeholder="Describe your idea in 2–3 sentences. What does it do and why does it matter?" oninput="document.getElementById('brief-count').textContent=this.value.length;if(this.value.length>280)this.value=this.value.slice(0,280)"></textarea>
+        <span class="field-error" id="err-brief"></span>
+      </div>
+    </div>
+
+    <!-- Step 1: Details -->
+    <div class="modal-body" id="step-1" style="display:none">
+      <div class="field">
+        <label>What problem does it solve?</label>
+        <textarea id="f-problem" rows="3" placeholder="Describe the specific problem or gap this idea addresses…"></textarea>
+      </div>
+      <div class="field">
+        <label>Tags <span>comma-separated, up to 5</span></label>
+        <input id="f-tags" placeholder="e.g. mobile, fintech, rural, AI" oninput="renderTagPreview()">
+        <div id="tag-preview" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"></div>
+      </div>
+      <div class="field">
+        <label>Website / Deck Link <span>optional</span></label>
+        <input id="f-website" placeholder="https://…">
+      </div>
+      <div id="idea-preview"></div>
+    </div>
+
+    <!-- Step 2: You -->
+    <div class="modal-body" id="step-2" style="display:none">
+      <div class="field">
+        <label>Your Name <span>*</span></label>
+        <input id="f-author" placeholder="Full name" oninput="renderAuthorPreview()">
+        <span class="field-error" id="err-author"></span>
+      </div>
+      <div class="field">
+        <label>Email <span>private — for collaborator reach-outs</span></label>
+        <input id="f-email" type="email" placeholder="you@example.com">
+      </div>
+      <div id="author-preview"></div>
+    </div>
+
+    <!-- Step 3: Collaborate -->
+    <div class="modal-body" id="step-3" style="display:none">
+      <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:16px">Who do you need to bring this idea to life? Select all that apply.</p>
+      <div class="collab-pills" id="seeking-pills"></div>
+      <div class="field">
+        <label>Note for potential collaborators</label>
+        <textarea id="f-collab-note" rows="3" placeholder="What kind of commitment are you looking for? What's your vision for the collaboration?"></textarea>
+      </div>
+      <div id="seeking-preview"></div>
+    </div>
+
+    <div class="modal-footer">
+      <div class="step-count" id="step-count">1 / 4</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-ghost" id="btn-back" style="padding:9px 20px;font-size:13px;display:none" onclick="submitBack()">← Back</button>
+        <button class="btn-primary" id="btn-next" style="padding:9px 22px;font-size:13px" onclick="submitNext()">Continue →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ DETAIL MODAL ═══════════════ -->
+<div class="overlay" id="detail-overlay" onclick="closeOverlay('detail-overlay')">
+  <div class="modal modal-lg" onclick="event.stopPropagation()" id="detail-modal">
+    <div class="detail-hero" id="detail-hero"></div>
+    <div class="detail-tabs">
+      <button class="dtab active" onclick="switchTab('overview',this)">overview</button>
+      <button class="dtab" onclick="switchTab('collaborate',this)">collaborate</button>
+    </div>
+    <div class="detail-body" id="detail-tab-overview"></div>
+    <div class="detail-body" id="detail-tab-collaborate" style="display:none"></div>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════
+   DATA & STATE
+══════════════════════════════════════════════ */
+const CAT_COLORS={Technology:"#3a7bd5","Social Impact":"#2a8a7a",Creative:"#c44a9a",Climate:"#4a9a4a",Health:"#e06040",Education:"#7a60c4",Fintech:"#e8a020",Culture:"#c44a5a"};
+const CATS=["All","Technology","Social Impact","Creative","Climate","Health","Education","Fintech","Culture"];
+const STAGES=["Concept","Prototype","Validation","Scaling"];
+const SEEKING_OPTS=["Developer","Designer","Investor","Researcher","Marketing","Operations","Legal","Mentor","Co-founder","Advisor","Engineer","NGO Partner"];
+const AV_COLORS=["#3a7bd5","#2a8a7a","#c44a9a","#e8a020","#c44a5a","#7a60c4","#e06040","#4a9a4a"];
+
+let ideas=[
+  {id:1,title:"Community Solar Grid for Urban Neighbourhoods",category:"Climate",stage:"Prototype",brief:"Micro solar installations shared across apartment blocks, cutting electricity bills by 60% and creating clean energy co-ops in dense cities.",author:"Ama Owusu",votes:142,collaborators:["TE","KA","BM"],tags:["energy","community","hardware"],date:"2026-05-10",seeking:["Engineer","Investor","Policy Advisor"],collab_note:"Looking for a hardware engineer and an impact investor ready to pilot in Accra.",website:""},
+  {id:2,title:"Oral History Archive — Digitising Elder Stories",category:"Culture",stage:"Concept",brief:"A platform to record, transcribe and geo-tag stories from African elders before they are lost — building the continent's largest living oral archive.",author:"Kwame Asante",votes:89,collaborators:["AO","FD"],tags:["heritage","AI","storytelling"],date:"2026-05-14",seeking:["Developer","Linguist","Archivist"],collab_note:"",website:""},
+  {id:3,title:"Agri-Fintech: Harvest-Linked Micro-Credit",category:"Fintech",stage:"Validation",brief:"Loans that auto-adjust repayment schedules based on satellite crop yield data — giving smallholder farmers breathing room when harvests are lean.",author:"Fatima Diallo",votes:217,collaborators:["KA","TM","ES"],tags:["fintech","agriculture","satellite"],date:"2026-05-01",seeking:["Data Scientist","Banker","Agronomist"],collab_note:"",website:""},
+  {id:4,title:"Mental Health Kiosks in Public Transit",category:"Health",stage:"Concept",brief:"Soundproofed 4-minute wellness pods installed at metro stations — anonymous CBT micro-sessions and breathwork guided by AI between commutes.",author:"Tunde Martins",votes:63,collaborators:["ES"],tags:["mental health","design","AI"],date:"2026-05-18",seeking:["Therapist","UX Designer","Hardware Engineer"],collab_note:"",website:""},
+  {id:5,title:"Peer-to-Peer Skills Marketplace for Informal Sector",category:"Education",stage:"Scaling",brief:"A WhatsApp-native platform where tradespeople teach skills and earn micro-certificates — building a verifiable credential layer for the informal economy.",author:"Efua Sarfo",votes:188,collaborators:["AO","TM","FD","KA"],tags:["education","web3","mobile"],date:"2026-04-22",seeking:["Growth Hacker","Mobile Dev","NGO Partner"],collab_note:"",website:""},
+];
+
+let votes={};
+let activeCat="All", activeStage="All";
+let submitStep=0, selectedStage="Concept", selectedSeeking=[];
+let openIdeaId=null, detailTab="overview";
+
+/* ══════════════════════════════════════════════
+   UTILS
+══════════════════════════════════════════════ */
+const initials=n=>n.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);
+const avColor=s=>{let h=0;for(let c of s)h=(h*31+c.charCodeAt(0))%AV_COLORS.length;return AV_COLORS[Math.abs(h)];};
+const fmt=n=>{if(n>=1e6)return"$"+(n/1e6).toFixed(1)+"M";if(n>=1e3)return"$"+(n/1e3).toFixed(0)+"K";return"$"+n};
+const timeAgo=d=>{const diff=Math.floor((Date.now()-new Date(d))/86400000);if(diff===0)return"today";if(diff===1)return"yesterday";return diff+"d ago"};
+const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+
+function avatar(name,size=32){
+  const bg=avColor(name),ini=initials(name),fs=Math.round(size*.34);
+  return `<div class="avatar" style="width:${size}px;height:${size}px;background:${bg};font-size:${fs}px">${ini}</div>`;
+}
+function badge(cat){
+  const c=CAT_COLORS[cat]||"#888";
+  return `<span class="badge" style="background:${c}22;color:${c};border:1px solid ${c}44">${esc(cat)}</span>`;
+}
+function stageBadge(s){
+  const m={Concept:"#7a60c4",Prototype:"#e8a020",Validation:"#2a8a7a",Scaling:"#3a7bd5"};
+  const c=m[s]||"#888";
+  return `<span class="stage-badge" style="background:${c}22;color:${c}">◉ ${esc(s)}</span>`;
+}
+
+/* ══════════════════════════════════════════════
+   STATS
+══════════════════════════════════════════════ */
+function totalVotes(){return ideas.reduce((s,i)=>s+i.votes+(votes[i.id]?1:0),0)}
+function totalCollabs(){return ideas.reduce((s,i)=>s+(i.collaborators?.length||0),0)}
+
+function updateStats(){
+  document.getElementById("stat-ideas").textContent=ideas.length;
+  document.getElementById("stat-votes").textContent=totalVotes();
+  document.getElementById("stat-collabs").textContent=totalCollabs();
+  const cats=[...new Set(ideas.map(i=>i.category))].length;
+  document.getElementById("hero-stats").innerHTML=
+    [["ideas.length","Ideas Banked"],[totalVotes(),"Community Votes"],[totalCollabs(),"Active Collabs"],[cats,"Categories"]]
+    .map(([n,l],i)=>`<div class="hstat" ${i===3?'style="border-right:none"':""}><div class="hstat-n">${typeof n==="string"?ideas.length:n}</div><div class="hstat-l">${l}</div></div>`).join("");
+  // fix first
+  const hstats=document.querySelectorAll(".hstat-n");
+  if(hstats[0])hstats[0].textContent=ideas.length;
+}
+
+/* ══════════════════════════════════════════════
+   TICKER
+══════════════════════════════════════════════ */
+function buildTicker(){
+  const inner=document.getElementById("ticker-inner");
+  const items=[...ideas,...ideas].map(i=>{
+    const c=CAT_COLORS[i.category]||"#888";
+    return `<span class="ticker-item"><span class="ticker-dot" style="background:${c}"></span>${esc(i.title)}</span>`;
+  }).join("");
+  inner.innerHTML=items+items;
+}
+
+/* ══════════════════════════════════════════════
+   CATEGORY & STAGE PILLS
+══════════════════════════════════════════════ */
+function buildFilterPills(){
+  document.getElementById("cat-pills").innerHTML=CATS.map(c=>
+    `<button class="filter-pill${c===activeCat?" active":""}" onclick="setCat('${esc(c)}')">${esc(c)}</button>`
+  ).join("");
+  document.getElementById("stage-pills").innerHTML=["All",...STAGES].map(s=>
+    `<button class="stage-pill${s===activeStage?" active":""}" onclick="setStage('${esc(s)}')">${esc(s)}</button>`
+  ).join("");
+}
+function setCat(c){activeCat=c;buildFilterPills();renderGrid()}
+function setStage(s){activeStage=s;buildFilterPills();renderGrid()}
+
+/* ══════════════════════════════════════════════
+   GRID
+══════════════════════════════════════════════ */
+function getFiltered(){
+  const q=(document.getElementById("search-input")||{}).value?.toLowerCase()||"";
+  const sort=(document.getElementById("sort-select")||{}).value||"votes";
+  let list=ideas.filter(i=>{
+    if(activeCat!=="All"&&i.category!==activeCat)return false;
+    if(activeStage!=="All"&&i.stage!==activeStage)return false;
+    if(q&&!i.title.toLowerCase().includes(q)&&!(i.tags||[]).some(t=>t.includes(q)))return false;
+    return true;
+  });
+  list.sort((a,b)=>{
+    if(sort==="votes")return(b.votes+(votes[b.id]?1:0))-(a.votes+(votes[a.id]?1:0));
+    if(sort==="recent")return new Date(b.date)-new Date(a.date);
+    if(sort==="collabs")return(b.collaborators?.length||0)-(a.collaborators?.length||0);
+    return 0;
+  });
+  return list;
+}
+
+function renderGrid(){
+  const list=getFiltered();
+  const grid=document.getElementById("idea-grid");
+  const empty=document.getElementById("empty-state");
+  document.getElementById("bank-count").textContent=list.length+" idea"+(list.length!==1?"s":"");
+
+  if(!list.length){grid.style.display="none";empty.style.display="block";return}
+  grid.style.display="grid"; empty.style.display="none";
+
+  grid.innerHTML=list.map((idea,idx)=>{
+    const vt=idea.votes+(votes[idea.id]?1:0);
+    const voted=!!votes[idea.id];
+    const collabs=(idea.collaborators||[]);
+    const collabHtml=collabs.slice(0,3).map((c,i)=>`<div class="collab-av" style="background:${avColor(c)};z-index:${3-i}">${c}</div>`).join("")
+      +(collabs.length>3?`<div class="collab-more">+${collabs.length-3}</div>`:"");
+    const tagsHtml=(idea.tags||[]).map(t=>`<span class="card-tag">#${esc(t)}</span>`).join("");
+    return `<div class="idea-card" style="animation:fadeUp .5s ${idx*.055}s ease both" onclick="openDetail(${idea.id})">
+      <div class="card-top">
+        <div class="card-badges">${badge(idea.category)}${stageBadge(idea.stage)}</div>
+        <span class="card-time">${timeAgo(idea.date)}</span>
+      </div>
+      <div class="card-title">${esc(idea.title)}</div>
+      <div class="card-brief">${esc(idea.brief)}</div>
+      ${tagsHtml?`<div class="card-tags">${tagsHtml}</div>`:""}
+      <div class="card-footer">
+        <div class="card-author">
+          ${avatar(idea.author,26)}
+          <span class="author-name">${esc(idea.author)}</span>
+          <div class="collab-stack">${collabHtml}</div>
+        </div>
+        <button class="vote-btn${voted?" voted":""}" onclick="event.stopPropagation();voteIdea(${idea.id})">↑ ${vt}</button>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function voteIdea(id){
+  votes[id]=!votes[id];
+  renderGrid();updateStats();
+  if(openIdeaId===id)openDetail(id);
+}
+
+/* ══════════════════════════════════════════════
+   DETAIL MODAL
+══════════════════════════════════════════════ */
+function openDetail(id){
+  openIdeaId=id;
+  const idea=ideas.find(i=>i.id===id);
+  if(!idea)return;
+  detailTab="overview";
+  renderDetailHero(idea);
+  renderDetailOverview(idea);
+  renderDetailCollab(idea);
+  // reset tabs
+  document.querySelectorAll(".dtab").forEach(t=>t.classList.remove("active"));
+  document.querySelectorAll(".dtab")[0].classList.add("active");
+  document.getElementById("detail-tab-overview").style.display="block";
+  document.getElementById("detail-tab-collaborate").style.display="none";
+  document.getElementById("detail-overlay").classList.add("open");
+}
+
+function renderDetailHero(idea){
+  const c=CAT_COLORS[idea.category]||"#888";
+  const vt=idea.votes+(votes[idea.id]?1:0);
+  const voted=!!votes[idea.id];
+  document.getElementById("detail-hero").style.background=`linear-gradient(135deg, ${c}22, ${c}08)`;
+  document.getElementById("detail-hero").innerHTML=`
+    <button class="modal-close" style="position:absolute;top:16px;right:16px" onclick="closeOverlay('detail-overlay')">✕</button>
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">${badge(idea.category)}${stageBadge(idea.stage)}</div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:21px;font-weight:700;line-height:1.35;color:var(--text);margin-bottom:12px;padding-right:40px">${esc(idea.title)}</h2>
+    <div style="display:flex;align-items:center;gap:10px">
+      ${avatar(idea.author,32)}
+      <div><div style="font-size:13px;font-weight:600">${esc(idea.author)}</div><div style="font-size:11px;color:var(--text3)">Idea originator · ${timeAgo(idea.date)}</div></div>
+      <button class="vote-btn${voted?" voted":""}" onclick="voteIdea(${idea.id})" style="margin-left:auto;padding:7px 16px;font-size:14px;font-weight:600">↑ ${vt}</button>
+    </div>`;
+}
+
+function renderDetailOverview(idea){
+  const seekingHtml=(idea.seeking||[]).map(s=>`<span class="tag-teal">${esc(s)}</span>`).join("");
+  const tagsHtml=(idea.tags||[]).map(t=>`<span class="card-tag">#${esc(t)}</span>`).join("");
+  const collabs=(idea.collaborators||[]);
+  const collabHtml=collabs.map(c=>`<div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.04);padding:6px 12px;border-radius:8px;border:1px solid var(--border);margin:3px">${avatar(c,24)}<span style="font-size:12px;color:var(--text2)">${c}</span></div>`).join("");
+  document.getElementById("detail-tab-overview").innerHTML=`
+    <p style="font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:18px">${esc(idea.brief)}</p>
+    ${tagsHtml?`<div style="margin-bottom:18px"><div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);margin-bottom:8px;letter-spacing:1px">TAGS</div><div style="display:flex;gap:6px;flex-wrap:wrap">${tagsHtml}</div></div>`:""}
+    ${seekingHtml?`<div class="seeking-box"><div class="seeking-label">SEEKING COLLABORATORS</div><div>${seekingHtml}</div>${idea.collab_note?`<p style="font-size:12px;color:var(--text2);margin-top:10px;line-height:1.6">${esc(idea.collab_note)}</p>`:""}</div>`:""}
+    ${collabs.length?`<div style="margin-top:18px"><div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);margin-bottom:10px;letter-spacing:1px">COLLABORATORS (${collabs.length})</div><div>${collabHtml}</div></div>`:""}
+    ${idea.website?`<a href="${esc(idea.website)}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:6px;margin-top:16px;font-size:13px;color:var(--amber);text-decoration:none">↗ View deck / website</a>`:""}`;
+}
+
+function renderDetailCollab(idea){
+  document.getElementById("detail-tab-collaborate").innerHTML=`
+    <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:18px">Interested in contributing to this idea? Send a request to the originator.</p>
+    <div class="field"><label>Your Name *</label><input id="c-name" placeholder="Full name"></div>
+    <div class="field"><label>Email</label><input id="c-email" type="email" placeholder="you@example.com"></div>
+    <div class="field"><label>Your Role</label>
+      <select id="c-role">
+        ${["Developer","Designer","Investor","Researcher","Marketing","Operations","Legal","Mentor","Engineer","Other"].map(r=>`<option>${r}</option>`).join("")}
+      </select>
+    </div>
+    <div class="field"><label>Message</label><textarea id="c-msg" rows="3" placeholder="Tell them what you bring to the table and why you're excited about this idea…"></textarea></div>
+    <button class="btn-primary" style="width:100%;padding:12px;font-size:14px" onclick="sendCollabRequest(${idea.id})">Send Collaboration Request ✦</button>`;
+}
+
+function switchTab(tab,el){
+  detailTab=tab;
+  document.querySelectorAll(".dtab").forEach(t=>t.classList.remove("active"));
+  el.classList.add("active");
+  document.getElementById("detail-tab-overview").style.display=tab==="overview"?"block":"none";
+  document.getElementById("detail-tab-collaborate").style.display=tab==="collaborate"?"block":"none";
+}
+
+function sendCollabRequest(ideaId){
+  const name=(document.getElementById("c-name")||{}).value?.trim();
+  if(!name){toast("Please enter your name first");return}
+  const idea=ideas.find(i=>i.id===ideaId);
+  document.getElementById("detail-tab-collaborate").innerHTML=`
+    <div class="success-screen">
+      <div class="success-icon">✦</div>
+      <div class="success-title">Request Sent!</div>
+      <div class="success-desc">Your collaboration request has been submitted to <strong>${idea?esc(idea.author):"the founder"}</strong>. They'll be in touch if it's a good fit.</div>
+      <button class="btn-ghost" style="margin-top:18px;padding:8px 20px;font-size:13px" onclick="renderDetailCollab(ideas.find(i=>i.id==${ideaId}))">Send another</button>
+    </div>`;
+  toast("Collaboration request sent! ✦");
+}
+
+/* ══════════════════════════════════════════════
+   SUBMIT WIZARD
+══════════════════════════════════════════════ */
+const STEP_TITLES=["Idea","Details","You","Collaborate"];
+
+function openSubmit(){
+  submitStep=0; selectedStage="Concept"; selectedSeeking=[];
+  ["f-title","f-brief","f-problem","f-tags","f-website","f-author","f-email","f-collab-note"].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.value="";
+  });
+  document.getElementById("brief-count").textContent="0";
+  document.getElementById("tag-preview").innerHTML="";
+  document.getElementById("idea-preview").innerHTML="";
+  document.getElementById("author-preview").innerHTML="";
+  document.getElementById("seeking-preview").innerHTML="";
+  buildSeekingPills();
+  // reset stage picker
+  document.querySelectorAll(".stage-pick-btn").forEach(b=>b.classList.remove("sel"));
+  document.querySelector(".stage-pick-btn").classList.add("sel");
+  updateSubmitStep();
+  document.getElementById("submit-overlay").classList.add("open");
+}
+
+function updateSubmitStep(){
+  ["step-0","step-1","step-2","step-3"].forEach((id,i)=>{
+    document.getElementById(id).style.display=i===submitStep?"block":"none";
+  });
+  document.getElementById("submit-step-title").textContent=STEP_TITLES[submitStep];
+  document.getElementById("step-count").textContent=(submitStep+1)+" / 4";
+  document.getElementById("btn-back").style.display=submitStep>0?"inline-flex":"none";
+  document.getElementById("btn-next").textContent=submitStep<3?"Continue →":"Publish Idea ✦";
+  // progress
+  document.querySelectorAll(".progress-seg").forEach((s,i)=>s.classList.toggle("done",i<=submitStep));
+  document.querySelectorAll(".progress-lbl").forEach((l,i)=>l.classList.toggle("active",i===submitStep));
+  // preview on step 1
+  if(submitStep===1)renderIdeaPreview();
+}
+
+function pickStage(btn,stage){
+  selectedStage=stage;
+  document.querySelectorAll(".stage-pick-btn").forEach(b=>b.classList.remove("sel"));
+  btn.classList.add("sel");
+}
+
+function renderTagPreview(){
+  const tags=(document.getElementById("f-tags").value||"").split(",").map(t=>t.trim()).filter(Boolean).slice(0,5);
+  document.getElementById("tag-preview").innerHTML=tags.map(t=>`<span class="card-tag">#${esc(t)}</span>`).join("");
+}
+
+function renderIdeaPreview(){
+  const title=(document.getElementById("f-title")||{}).value?.trim();
+  const brief=(document.getElementById("f-brief")||{}).value?.trim();
+  const cat=(document.getElementById("f-category")||{}).value||"Technology";
+  if(!title){document.getElementById("idea-preview").innerHTML="";return}
+  document.getElementById("idea-preview").innerHTML=`
+    <div class="preview-box">
+      <div class="preview-label">PREVIEW</div>
+      <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">${badge(cat)}${stageBadge(selectedStage)}</div>
+      <div class="preview-title">${esc(title)}</div>
+      ${brief?`<div class="preview-brief">${esc(brief)}</div>`:""}
+    </div>`;
+}
+
+function renderAuthorPreview(){
+  const name=(document.getElementById("f-author")||{}).value?.trim();
+  if(!name){document.getElementById("author-preview").innerHTML="";return}
+  document.getElementById("author-preview").innerHTML=`
+    <div style="display:flex;align-items:center;gap:12px;padding:14px;background:rgba(255,255,255,.03);border-radius:10px;border:1px solid var(--border);margin-top:12px">
+      ${avatar(name,44)}
+      <div><div style="font-weight:600;font-size:15px">${esc(name)}</div><div style="font-size:12px;color:var(--text3);margin-top:2px">Idea originator</div></div>
+    </div>`;
+}
+
+function buildSeekingPills(){
+  document.getElementById("seeking-pills").innerHTML=SEEKING_OPTS.map(r=>
+    `<button class="seeking-pill${selectedSeeking.includes(r)?" sel":""}" onclick="toggleSeeking('${esc(r)}',this)">${selectedSeeking.includes(r)?"✓ ":""}${esc(r)}</button>`
+  ).join("");
+}
+
+function toggleSeeking(role,btn){
+  if(selectedSeeking.includes(role))selectedSeeking=selectedSeeking.filter(r=>r!==role);
+  else selectedSeeking.push(role);
+  buildSeekingPills();
+  renderSeekingPreview();
+}
+
+function renderSeekingPreview(){
+  if(!selectedSeeking.length){document.getElementById("seeking-preview").innerHTML="";return}
+  document.getElementById("seeking-preview").innerHTML=`
+    <div class="seeking-box">
+      <div class="seeking-label">SEEKING</div>
+      <div>${selectedSeeking.map(s=>`<span class="tag-teal">${esc(s)}</span>`).join("")}</div>
+    </div>`;
+}
+
+function clearErr(id){const el=document.getElementById(id);if(el)el.textContent="";}
+
+function submitNext(){
+  clearErr("err-title");clearErr("err-brief");clearErr("err-author");
+  if(submitStep===0){
+    const title=(document.getElementById("f-title")||{}).value?.trim();
+    const brief=(document.getElementById("f-brief")||{}).value?.trim();
+    if(!title){document.getElementById("err-title").textContent="Required";return}
+    if(!brief){document.getElementById("err-brief").textContent="Required";return}
+  }
+  if(submitStep===2){
+    const author=(document.getElementById("f-author")||{}).value?.trim();
+    if(!author){document.getElementById("err-author").textContent="Required";return}
+  }
+  if(submitStep===3){publishIdea();return}
+  submitStep++;updateSubmitStep();
+}
+
+function submitBack(){if(submitStep>0){submitStep--;updateSubmitStep();}}
+
+function publishIdea(){
+  const title=(document.getElementById("f-title")||{}).value?.trim();
+  const brief=(document.getElementById("f-brief")||{}).value?.trim();
+  const cat=(document.getElementById("f-category")||{}).value||"Technology";
+  const author=(document.getElementById("f-author")||{}).value?.trim()||"Anonymous";
+  const tags=((document.getElementById("f-tags")||{}).value||"").split(",").map(t=>t.trim()).filter(Boolean).slice(0,5);
+  const collab_note=(document.getElementById("f-collab-note")||{}).value?.trim()||"";
+  const website=(document.getElementById("f-website")||{}).value?.trim()||"";
+
+  const newIdea={
+    id:Date.now(),
+    title,category:cat,stage:selectedStage,brief,
+    author,votes:0,collaborators:[],tags,
+    date:new Date().toISOString().slice(0,10),
+    seeking:[...selectedSeeking],collab_note,website
+  };
+  ideas.unshift(newIdea);
+  closeOverlay("submit-overlay");
+  buildTicker();updateStats();buildFilterPills();renderGrid();
+  toast("Your idea has been published to the bank! ✦");
+}
+
+/* ══════════════════════════════════════════════
+   OVERLAYS & TOAST
+══════════════════════════════════════════════ */
+function closeOverlay(id){document.getElementById(id).classList.remove("open")}
+
+let toastTimer=null;
+function toast(msg){
+  const el=document.getElementById("toast");
+  document.getElementById("toast-msg").textContent=msg;
+  el.classList.add("show");
+  if(toastTimer)clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.classList.remove("show"),3500);
+}
+
+/* ══════════════════════════════════════════════
+   INIT
+══════════════════════════════════════════════ */
+function init(){
+  buildTicker();
+  buildFilterPills();
+  updateStats();
+  renderGrid();
+}
+
+document.addEventListener("DOMContentLoaded",init);
+</script>
+</body>
+</html>
